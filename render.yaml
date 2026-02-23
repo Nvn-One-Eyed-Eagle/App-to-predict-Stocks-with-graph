@@ -5,10 +5,9 @@ services:
     runtimeVersion: "3.10.13"
     buildCommand: |
       pip install -r requirements.txt
-      python StockPredictionPortal/manage.py collectstatic --noinput
+      cd StockPredictionPortal && python manage.py collectstatic --noinput
     startCommand: |
-      python StockPredictionPortal/manage.py migrate
-      gunicorn StockPredictionPortal.wsgi:application --bind 0.0.0.0:$PORT
+      cd StockPredictionPortal && python manage.py migrate && gunicorn StockPredictionPortal.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: SECRET_KEY
         value: your-secret-key-here-change-this
