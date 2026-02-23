@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockSeer — Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --black: #080a0e;
+            --surface: #0e1117;
+            --card: #141820;
+            --border: #1e2535;
+            --accent: #c8f135;
+            --accent-dim: #8aaa1f;
+            --text: #e8eaf0;
+            --muted: #5a6580;
+            --red: #ff4d6a;
+            --green: #c8f135;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Grid background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 48px 48px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Glow blob ── */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(200,241,53,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(30px); }
+        }
+
+        /* ── Layout ── */
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── Nav ── */
+        nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 24px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--text); }
+
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: all 0.18s ease;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--black);
+            font-weight: 600;
+        }
+        .btn-primary:hover { background: #d8ff3a; box-shadow: 0 0 20px rgba(200,241,53,0.3); }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid rgba(255,77,106,0.35);
+            color: var(--red);
+            font-size: 0.7rem;
+        }
+        .btn-danger:hover { background: rgba(255,77,106,0.1); border-color: var(--red); }
+
+        /* ── Hero ── */
+        .hero {
+            padding: 80px 0 60px;
+            position: relative;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(200,241,53,0.07);
+            border: 1px solid rgba(200,241,53,0.2);
+            border-radius: 2px;
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 28px;
+        }
+
+        .hero-label::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .hero h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.92;
+            letter-spacing: 0.03em;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            font-family: 'DM Serif Display', serif;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            max-width: 420px;
+            font-size: 0.78rem;
+            line-height: 1.8;
+            color: var(--muted);
+            margin-bottom: 40px;
+        }
+
+        .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        /* ── Ticker strip ── */
+        .ticker-strip {
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            padding: 10px 0;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ticker-inner {
+            display: flex;
+            gap: 48px;
+            animation: scroll-ticker 20s linear infinite;
+            width: max-content;
+        }
+
+        @keyframes scroll-ticker {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .tick-item {
+            font-size: 0.68rem;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            color: var(--muted);
+        }
+
+        .tick-item .sym { color: var(--text); font-weight: 500; margin-right: 8px; }
+        .tick-item .up { color: var(--green); }
+        .tick-item .dn { color: var(--red); }
+
+        /* ── Section: Public Apple Preview ── */
+        .section-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .chart-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 60px;
+            animation: fadeUp 0.7s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chart-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chart-card-title {
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            color: var(--text);
+            text-transform: uppercase;
+        }
+
+        .chart-card-badge {
+            background: rgba(200,241,53,0.1);
+            color: var(--accent);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        .chart-card img {
+            width: 100%;
+            display: block;
+            max-height: 420px;
+            object-fit: cover;
+        }
+
+        /* ── Dashboard (logged in) ── */
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .dashboard-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.8rem;
+            letter-spacing: 0.05em;
+            color: var(--text);
+        }
+
+        /* ── Search form ── */
+        .search-form {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+            transition: border-color 0.2s;
+        }
+
+        .search-form:focus-within { border-color: rgba(200,241,53,0.4); }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .field label {
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .field input {
+            background: var(--black);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            padding: 10px 14px;
+            outline: none;
+            transition: border-color 0.18s;
+            letter-spacing: 0.08em;
+        }
+
+        .field input::placeholder { color: var(--muted); }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(200,241,53,0.08); }
+
+        /* ── Autocomplete dropdown ── */
+        .search-wrapper { position: relative; flex: 1; min-width: 200px; }
+
+        .search-input-row {
+            display: flex;
+            align-items: center;
+            background: var(--black);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: border-color 0.18s;
+            overflow: hidden;
+        }
+        .search-input-row:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(200,241,53,0.08);
+        }
+
+        .search-icon {
+            padding: 0 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            pointer-events: none;
+            flex-shrink: 0;
+        }
+
+        #company-search {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            padding: 10px 14px 10px 0;
+            outline: none;
+            letter-spacing: 0.05em;
+        }
+        #company-search::placeholder { color: var(--muted); }
+
+        .selected-badge {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: rgba(200,241,53,0.1);
+            border-left: 1px solid var(--border);
+            padding: 0 12px;
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            height: 100%;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .selected-badge:hover { background: rgba(200,241,53,0.18); }
+        .selected-badge.visible { display: flex; }
+
+        .autocomplete-list {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0; right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            z-index: 100;
+            max-height: 280px;
+            overflow-y: auto;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        }
+        .autocomplete-list.open { display: block; }
+        .autocomplete-list::-webkit-scrollbar { width: 4px; }
+        .autocomplete-list::-webkit-scrollbar-track { background: var(--card); }
+        .autocomplete-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .ac-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+            gap: 12px;
+        }
+        .ac-item:last-child { border-bottom: none; }
+        .ac-item:hover, .ac-item.highlighted { background: rgba(200,241,53,0.06); }
+
+        .ac-name {
+            font-size: 0.78rem;
+            color: var(--text);
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ac-name mark {
+            background: transparent;
+            color: var(--accent);
+        }
+        .ac-ticker {
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 2px 7px;
+            flex-shrink: 0;
+        }
+        .ac-sector {
+            font-size: 0.6rem;
+            color: var(--muted);
+            flex-shrink: 0;
+            display: none;
+        }
+
+        .ac-empty {
+            padding: 14px 16px;
+            font-size: 0.72rem;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .search-hint {
+            font-size: 0.6rem;
+            color: var(--muted);
+            margin-top: 5px;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── Error ── */
+        .error-box {
+            background: rgba(255,77,106,0.08);
+            border: 1px solid rgba(255,77,106,0.3);
+            border-radius: 4px;
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            color: var(--red);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-box::before { content: '⚠'; font-size: 1rem; }
+
+        /* ── Chart result label ── */
+        .result-ticker-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--border);
+            padding: 24px;
+            text-align: center;
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-top: 60px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 4rem; }
+            .dashboard-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+    <a class="logo" href="#"><span>Stock</span>Seer</a>
+    <div class="nav-actions">
+        {% if not request.user.is_authenticated %}
+            <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>
+        {% else %}
+            <form action="{% url 'logout' %}" method="POST" style="margin:0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- ── Ticker strip ── -->
+<div class="ticker-strip">
+    <div class="ticker-inner">
+        <span class="tick-item"><span class="sym">AAPL</span><span class="up">▲ 1.24%</span></span>
+        <span class="tick-item"><span class="sym">TSLA</span><span class="dn">▼ 0.87%</span></span>
+        <span class="tick-item"><span class="sym">NVDA</span><span class="up">▲ 3.41%</span></span>
+        <span class="tick-item"><span class="sym">MSFT</span><span class="up">▲ 0.55%</span></span>
+        <span class="tick-item"><span class="sym">GOOGL</span><span class="dn">▼ 0.22%</span></span>
+        <span class="tick-item"><span class="sym">AMZN</span><span class="up">▲ 2.10%</span></span>
+        <span class="tick-item"><span class="sym">META</span><span class="up">▲ 1.67%</span></span>
+        <span class="tick-item"><span class="sym">NFLX</span><span class="dn">▼ 1.03%</span></span>
+        <!-- duplicate for seamless loop -->
+        <span class="tick-item"><span class="sym">AAPL</span><span class="up">▲ 1.24%</span></span>
+        <span class="tick-item"><span class="sym">TSLA</span><span class="dn">▼ 0.87%</span></span>
+        <span class="tick-item"><span class="sym">NVDA</span><span class="up">▲ 3.41%</span></span>
+        <span class="tick-item"><span class="sym">MSFT</span><span class="up">▲ 0.55%</span></span>
+        <span class="tick-item"><span class="sym">GOOGL</span><span class="dn">▼ 0.22%</span></span>
+        <span class="tick-item"><span class="sym">AMZN</span><span class="up">▲ 2.10%</span></span>
+        <span class="tick-item"><span class="sym">META</span><span class="up">▲ 1.67%</span></span>
+        <span class="tick-item"><span class="sym">NFLX</span><span class="dn">▼ 1.03%</span></span>
+    </div>
+</div>
+
+<div class="wrapper">
+
+    {% if not request.user.is_authenticated %}
+
+        <!-- ── Hero (logged out) ── -->
+        <section class="hero">
+            <div class="hero-label">AI-Powered Forecasting</div>
+            <h1>Predict<br>the <em>Market</em></h1>
+            <p class="hero-sub">
+                Machine-learning models trained on historical price data
+                and market signals — delivering next-day stock predictions
+                with precision.
+            </p>
+            <div class="hero-cta">
+                <a href="{% url 'signup' %}" class="btn btn-primary">Get started free</a>
+                <a href="{% url 'login' %}" class="btn btn-ghost">Sign in →</a>
+            </div>
+        </section>
+
+        <!-- ── Apple preview ── -->
+        <p class="section-label">Live preview — AAPL</p>
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <span class="chart-card-title">Apple Inc. · AAPL — Price Prediction</span>
+                <span class="chart-card-badge">Public Preview</span>
+            </div>
+            <img src="data:image/png;base64,{{ apple }}" alt="Apple Stock Prediction Plot">
+        </div>
+
+    {% else %}
+
+        <!-- ── Dashboard (logged in) ── -->
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">Your Dashboard</h2>
+        </div>
+
+        <!-- Search form -->
+        <form method="get" class="search-form" id="stock-form">
+            <!-- Hidden field that actually submits the ticker -->
+            <input type="hidden" name="ticker" id="ticker" value="{{ ticker }}">
+
+            <div class="search-wrapper">
+                <label style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Company or Ticker</label>
+                <div class="search-input-row">
+                    <span class="search-icon">⌕</span>
+                    <input
+                        type="text"
+                        id="company-search"
+                        placeholder="Search Apple, Tesla, INFY…"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <div class="selected-badge" id="selected-badge" title="Click to clear">
+                        <span id="badge-text"></span>
+                        <span style="opacity:0.5;font-size:0.8em;">✕</span>
+                    </div>
+                </div>
+                <div class="search-hint">Type a company name or ticker symbol</div>
+                <div class="autocomplete-list" id="ac-list"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="height:42px; align-self:flex-end;" id="submit-btn">
+                Run Prediction →
+            </button>
+        </form>
+
+        <!-- Error or chart -->
+        {% if error %}
+            <div class="error-box">{{ error }}</div>
+        {% elif chart %}
+            <p class="result-ticker-label">{{ ticker }}</p>
+            <p class="section-label">Prediction output</p>
+            <div class="chart-card" style="animation-delay:0.1s">
+                <div class="chart-card-header">
+                    <span class="chart-card-title">{{ ticker }} — Price Prediction</span>
+                    <span class="chart-card-badge">ML Model</span>
+                </div>
+                <img src="data:image/png;base64,{{ chart }}" alt="Stock Prediction Plot for {{ ticker }}">
+            </div>
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+<footer>
+    StockSeer &mdash; For informational purposes only. Not financial advice.
+</footer>
+
+<script>
+// ── Stock database (name → ticker) ────────────────────────────────────────
+const STOCKS = [
+  // US Large Cap
+  {n:"Apple Inc.",             t:"AAPL",    s:"Technology"},
+  {n:"Microsoft Corporation",  t:"MSFT",    s:"Technology"},
+  {n:"NVIDIA Corporation",     t:"NVDA",    s:"Technology"},
+  {n:"Alphabet Inc.",          t:"GOOGL",   s:"Technology"},
+  {n:"Amazon.com Inc.",        t:"AMZN",    s:"Consumer"},
+  {n:"Meta Platforms Inc.",    t:"META",    s:"Technology"},
+  {n:"Tesla Inc.",             t:"TSLA",    s:"Automotive"},
+  {n:"Berkshire Hathaway",     t:"BRK-B",   s:"Finance"},
+  {n:"Eli Lilly and Company",  t:"LLY",     s:"Healthcare"},
+  {n:"Broadcom Inc.",          t:"AVGO",    s:"Technology"},
+  {n:"JPMorgan Chase & Co.",   t:"JPM",     s:"Finance"},
+  {n:"Visa Inc.",              t:"V",       s:"Finance"},
+  {n:"ExxonMobil Corporation", t:"XOM",     s:"Energy"},
+  {n:"UnitedHealth Group",     t:"UNH",     s:"Healthcare"},
+  {n:"Johnson & Johnson",      t:"JNJ",     s:"Healthcare"},
+  {n:"Walmart Inc.",           t:"WMT",     s:"Retail"},
+  {n:"Mastercard Incorporated",t:"MA",      s:"Finance"},
+  {n:"Procter & Gamble Co.",   t:"PG",      s:"Consumer"},
+  {n:"Netflix Inc.",           t:"NFLX",    s:"Entertainment"},
+  {n:"Adobe Inc.",             t:"ADBE",    s:"Technology"},
+  {n:"Salesforce Inc.",        t:"CRM",     s:"Technology"},
+  {n:"Advanced Micro Devices", t:"AMD",     s:"Technology"},
+  {n:"Intel Corporation",      t:"INTC",    s:"Technology"},
+  {n:"Qualcomm Inc.",          t:"QCOM",    s:"Technology"},
+  {n:"Texas Instruments",      t:"TXN",     s:"Technology"},
+  {n:"PayPal Holdings Inc.",   t:"PYPL",    s:"Finance"},
+  {n:"Shopify Inc.",           t:"SHOP",    s:"E-commerce"},
+  {n:"Spotify Technology",     t:"SPOT",    s:"Entertainment"},
+  {n:"Airbnb Inc.",            t:"ABNB",    s:"Travel"},
+  {n:"Uber Technologies Inc.", t:"UBER",    s:"Transportation"},
+  {n:"Palantir Technologies",  t:"PLTR",    s:"Technology"},
+  {n:"Snowflake Inc.",         t:"SNOW",    s:"Technology"},
+  {n:"CrowdStrike Holdings",   t:"CRWD",    s:"Cybersecurity"},
+  {n:"Datadog Inc.",           t:"DDOG",    s:"Technology"},
+  {n:"Coinbase Global Inc.",   t:"COIN",    s:"Crypto"},
+  {n:"Block Inc.",             t:"SQ",      s:"Finance"},
+  {n:"Robinhood Markets Inc.", t:"HOOD",    s:"Finance"},
+  {n:"Goldman Sachs Group",    t:"GS",      s:"Finance"},
+  {n:"Morgan Stanley",         t:"MS",      s:"Finance"},
+  {n:"Bank of America Corp.",  t:"BAC",     s:"Finance"},
+  {n:"Wells Fargo & Company",  t:"WFC",     s:"Finance"},
+  {n:"Citigroup Inc.",         t:"C",       s:"Finance"},
+  {n:"American Express Co.",   t:"AXP",     s:"Finance"},
+  {n:"Boeing Company",         t:"BA",      s:"Aerospace"},
+  {n:"Lockheed Martin Corp.",  t:"LMT",     s:"Defense"},
+  {n:"Caterpillar Inc.",       t:"CAT",     s:"Industrial"},
+  {n:"Deere & Company",        t:"DE",      s:"Industrial"},
+  {n:"3M Company",             t:"MMM",     s:"Industrial"},
+  {n:"General Electric Co.",   t:"GE",      s:"Industrial"},
+  {n:"Ford Motor Company",     t:"F",       s:"Automotive"},
+  {n:"General Motors Company", t:"GM",      s:"Automotive"},
+  {n:"Walt Disney Company",    t:"DIS",     s:"Entertainment"},
+  {n:"Comcast Corporation",    t:"CMCSA",   s:"Media"},
+  {n:"AT&T Inc.",              t:"T",       s:"Telecom"},
+  {n:"Verizon Communications", t:"VZ",      s:"Telecom"},
+  {n:"T-Mobile US Inc.",       t:"TMUS",    s:"Telecom"},
+  {n:"Chevron Corporation",    t:"CVX",     s:"Energy"},
+  {n:"ConocoPhillips",         t:"COP",     s:"Energy"},
+  {n:"Pfizer Inc.",            t:"PFE",     s:"Healthcare"},
+  {n:"AbbVie Inc.",            t:"ABBV",    s:"Healthcare"},
+  {n:"Merck & Co. Inc.",       t:"MRK",     s:"Healthcare"},
+  {n:"Bristol-Myers Squibb",   t:"BMY",     s:"Healthcare"},
+  {n:"Moderna Inc.",           t:"MRNA",    s:"Healthcare"},
+  {n:"BioNTech SE",            t:"BNTX",    s:"Healthcare"},
+  {n:"Starbucks Corporation",  t:"SBUX",    s:"Consumer"},
+  {n:"McDonald's Corporation", t:"MCD",     s:"Consumer"},
+  {n:"Coca-Cola Company",      t:"KO",      s:"Consumer"},
+  {n:"PepsiCo Inc.",           t:"PEP",     s:"Consumer"},
+  {n:"Costco Wholesale Corp.", t:"COST",    s:"Retail"},
+  {n:"Home Depot Inc.",        t:"HD",      s:"Retail"},
+  {n:"Target Corporation",     t:"TGT",     s:"Retail"},
+  {n:"Nike Inc.",              t:"NKE",     s:"Consumer"},
+  // Indian stocks (NSE)
+  {n:"Infosys Limited",        t:"INFY.NS", s:"Technology"},
+  {n:"Tata Consultancy Services",t:"TCS.NS",s:"Technology"},
+  {n:"Wipro Limited",          t:"WIPRO.NS",s:"Technology"},
+  {n:"HCL Technologies",       t:"HCLTECH.NS",s:"Technology"},
+  {n:"Reliance Industries",    t:"RELIANCE.NS",s:"Energy"},
+  {n:"HDFC Bank Limited",      t:"HDFCBANK.NS",s:"Finance"},
+  {n:"ICICI Bank Limited",     t:"ICICIBANK.NS",s:"Finance"},
+  {n:"State Bank of India",    t:"SBIN.NS", s:"Finance"},
+  {n:"Bajaj Finance Limited",  t:"BAJFINANCE.NS",s:"Finance"},
+  {n:"Axis Bank Limited",      t:"AXISBANK.NS",s:"Finance"},
+  {n:"Larsen & Toubro Ltd.",   t:"LT.NS",   s:"Industrial"},
+  {n:"Maruti Suzuki India",    t:"MARUTI.NS",s:"Automotive"},
+  {n:"Tata Motors Limited",    t:"TATAMOTORS.NS",s:"Automotive"},
+  {n:"Sun Pharmaceutical",     t:"SUNPHARMA.NS",s:"Healthcare"},
+  {n:"Dr. Reddy's Laboratories",t:"DRREDDY.NS",s:"Healthcare"},
+  {n:"Asian Paints Limited",   t:"ASIANPAINT.NS",s:"Consumer"},
+  {n:"Hindustan Unilever",     t:"HINDUNILVR.NS",s:"Consumer"},
+  {n:"ITC Limited",            t:"ITC.NS",  s:"Consumer"},
+  {n:"Adani Enterprises",      t:"ADANIENT.NS",s:"Industrial"},
+  {n:"Adani Ports & SEZ",      t:"ADANIPORTS.NS",s:"Infrastructure"},
+  // UK
+  {n:"Shell plc",              t:"SHEL",    s:"Energy"},
+  {n:"AstraZeneca plc",        t:"AZN",     s:"Healthcare"},
+  {n:"HSBC Holdings plc",      t:"HSBC",    s:"Finance"},
+  {n:"Unilever plc",           t:"UL",      s:"Consumer"},
+  {n:"BP plc",                 t:"BP",      s:"Energy"},
+];
+
+// ── State ─────────────────────────────────────────────────────────────────
+let highlighted = -1;
+let selectedTicker = "{{ ticker }}";
+
+const searchInput  = document.getElementById('company-search');
+const hiddenTicker = document.getElementById('ticker');
+const acList       = document.getElementById('ac-list');
+const badge        = document.getElementById('selected-badge');
+const badgeText    = document.getElementById('badge-text');
+const form         = document.getElementById('stock-form');
+
+// Pre-fill if we already have a ticker from Django
+if (selectedTicker) {
+    const match = STOCKS.find(s => s.t === selectedTicker);
+    if (match) {
+        searchInput.value = match.n;
+        showBadge(match.t);
+    } else {
+        searchInput.value = selectedTicker;
+        showBadge(selectedTicker);
+    }
+}
+
+function showBadge(ticker) {
+    badgeText.textContent = ticker;
+    badge.classList.add('visible');
+}
+
+function clearSelection() {
+    selectedTicker = '';
+    hiddenTicker.value = '';
+    searchInput.value = '';
+    badge.classList.remove('visible');
+    searchInput.focus();
+}
+
+badge.addEventListener('click', clearSelection);
+
+function highlight(q, text) {
+    if (!q) return text;
+    const idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx === -1) return text;
+    return text.slice(0, idx) +
+           '<mark>' + text.slice(idx, idx + q.length) + '</mark>' +
+           text.slice(idx + q.length);
+}
+
+function renderList(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) { acList.classList.remove('open'); return; }
+
+    const results = STOCKS.filter(s =>
+        s.n.toLowerCase().includes(q) ||
+        s.t.toLowerCase().includes(q) ||
+        s.s.toLowerCase().includes(q)
+    ).slice(0, 10);
+
+    if (results.length === 0) {
+        acList.innerHTML = `<div class="ac-empty">No results for "${query}"</div>`;
+        acList.classList.add('open');
+        highlighted = -1;
+        return;
+    }
+
+    acList.innerHTML = results.map((s, i) => `
+        <div class="ac-item" data-ticker="${s.t}" data-name="${s.n}" data-idx="${i}">
+            <span class="ac-name">${highlight(q, s.n)}</span>
+            <span class="ac-ticker">${s.t}</span>
+        </div>
+    `).join('');
+
+    acList.classList.add('open');
+    highlighted = -1;
+
+    acList.querySelectorAll('.ac-item').forEach(item => {
+        item.addEventListener('mousedown', e => {
+            e.preventDefault();
+            selectItem(item.dataset.ticker, item.dataset.name);
+        });
+    });
+}
+
+function selectItem(ticker, name) {
+    selectedTicker = ticker;
+    hiddenTicker.value = ticker;
+    searchInput.value = name;
+    showBadge(ticker);
+    acList.classList.remove('open');
+    highlighted = -1;
+}
+
+searchInput.addEventListener('input', e => {
+    if (badge.classList.contains('visible')) clearSelection();
+    renderList(e.target.value);
+});
+
+searchInput.addEventListener('focus', e => {
+    if (e.target.value && !badge.classList.contains('visible')) renderList(e.target.value);
+});
+
+searchInput.addEventListener('keydown', e => {
+    const items = acList.querySelectorAll('.ac-item');
+    if (!items.length) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        highlighted = Math.min(highlighted + 1, items.length - 1);
+        items.forEach((el, i) => el.classList.toggle('highlighted', i === highlighted));
+        items[highlighted]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        highlighted = Math.max(highlighted - 1, 0);
+        items.forEach((el, i) => el.classList.toggle('highlighted', i === highlighted));
+        items[highlighted]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') {
+        if (highlighted >= 0 && items[highlighted]) {
+            e.preventDefault();
+            const item = items[highlighted];
+            selectItem(item.dataset.ticker, item.dataset.name);
+        }
+    } else if (e.key === 'Escape') {
+        acList.classList.remove('open');
+    }
+});
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrapper')) acList.classList.remove('open');
+});
+
+form.addEventListener('submit', e => {
+    // If user typed something but didn't pick from list, try exact ticker match
+    if (!hiddenTicker.value) {
+        const raw = searchInput.value.trim().toUpperCase();
+        if (raw) {
+            hiddenTicker.value = raw;
+        } else {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StockSeer{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --black: #080a0e; --surface: #0e1117; --card: #141820; --border: #1e2535;
+            --accent: #c8f135; --text: #e8eaf0; --muted: #5a6580; --red: #ff4d6a;
+        }
+        body { background: var(--black); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height:100vh; }
+        body::before{ content:''; position:fixed; inset:0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size:48px 48px; opacity:0.35; pointer-events:none; z-index:0 }
+        body::after{ content:''; position:fixed; top:-20%; right:-10%; width:600px; height:600px; background: radial-gradient(circle, rgba(200,241,53,0.08) 0%, transparent 70%); pointer-events:none; z-index:0; animation:float 8s ease-in-out infinite }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(30px)} }
+        .wrapper{ position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 24px }
+        nav{ position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:28px 24px; max-width:960px; margin:0 auto }
+        .logo{ font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.12em; color:var(--accent); text-decoration:none }
+        .logo span{ color:var(--text) }
+        .nav-actions{ display:flex; gap:10px; align-items:center }
+        .btn{ display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border:none; text-decoration:none; transition:all .18s }
+        .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--muted) }
+        .btn-ghost:hover{ border-color:var(--accent); color:var(--accent) }
+        .btn-primary{ background:var(--accent); color:var(--black); font-weight:600 }
+        .btn-primary:hover{ background:#d8ff3a; box-shadow:0 0 20px rgba(200,241,53,0.3) }
+        .btn-danger{ background:transparent; border:1px solid rgba(255,77,106,0.35); color:var(--red) }
+        .btn-danger:hover{ background:rgba(255,77,106,0.1); border-color:var(--red) }
+        .ticker-strip{ overflow:hidden; border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--surface); padding:10px 0; margin:20px 0; position:relative; z-index:1 }
+        .ticker-inner{ display:flex; gap:48px; animation:scroll-ticker 20s linear infinite; width:max-content }
+        @keyframes scroll-ticker{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+        .tick-item{ font-size:0.68rem; letter-spacing:0.05em; white-space:nowrap; color:var(--muted) }
+        .tick-item .sym{ color:var(--text); font-weight:500; margin-right:8px }
+        .chart-card{ background:var(--card); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:30px }
+        .chart-card-header{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border) }
+        .chart-card-title{ font-size:0.72rem; letter-spacing:0.08em; color:var(--text); text-transform:uppercase }
+        .chart-card img{ width:100%; display:block }
+        .search-form{ background:var(--card); border:1px solid var(--border); border-radius:6px; padding:20px; display:flex; gap:12px; align-items:flex-end }
+        .field{ display:flex; flex-direction:column; gap:6px; flex:1 }
+        .field label{ font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted) }
+        .field input{ background:var(--black); border:1px solid var(--border); border-radius:4px; color:var(--text); padding:10px 14px }
+        .error-box{ background:rgba(255,77,106,0.08); border:1px solid rgba(255,77,106,0.3); border-radius:4px; padding:12px 16px; color:var(--red); margin-bottom:16px }
+        footer{ position:relative; z-index:1; border-top:1px solid var(--border); padding:24px; text-align:center; font-size:0.62rem; color:var(--muted); text-transform:uppercase; margin-top:40px }
+        @media (max-width:600px){ .wrapper{ padding:0 16px } }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="logo" href="/"><span>Stock</span>Seer</a>
+    <div class="nav-actions">
+        {% if not request.user.is_authenticated %}
+            <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>
+        {% else %}
+            <form action="{% url 'logout' %}" method="POST" style="margin:0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="ticker-strip">
+    <div class="ticker-inner">
+        <span class="tick-item"><span class="sym">AAPL</span><span class="up">▲ 1.24%</span></span>
+        <span class="tick-item"><span class="sym">TSLA</span><span class="dn">▼ 0.87%</span></span>
+        <span class="tick-item"><span class="sym">NVDA</span><span class="up">▲ 3.41%</span></span>
+        <span class="tick-item"><span class="sym">MSFT</span><span class="up">▲ 0.55%</span></span>
+        <span class="tick-item"><span class="sym">GOOGL</span><span class="dn">▼ 0.22%</span></span>
+        <!-- duplicated for loop effect -->
+        <span class="tick-item"><span class="sym">AAPL</span><span class="up">▲ 1.24%</span></span>
+        <span class="tick-item"><span class="sym">TSLA</span><span class="dn">▼ 0.87%</span></span>
+    </div>
+</div>
+
+<div class="wrapper">
+    {% block content %}{% endblock %}
+</div>
+
+<footer>
+    StockSeer — For informational purposes only. Not financial advice.
+</footer>
+
+</body>
+</html>

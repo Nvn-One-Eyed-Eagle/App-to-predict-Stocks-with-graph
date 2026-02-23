@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Login — StockSeer{% endblock %}
+
+{% block content %}
+<div style="max-width:480px;margin:48px auto">
+    <div class="chart-card">
+        <div class="chart-card-header"><span class="chart-card-title">Sign in</span></div>
+        <div style="padding:16px">
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="error-box">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {{ form.as_p }}
+                <div style="display:flex;gap:10px;margin-top:12px">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <a href="{% url 'signup' %}" class="btn btn-ghost">Create account</a>
+                </div>
+                <div style="margin-top:10px">
+                    <a href="{% url 'password_reset' %}" class="btn btn-ghost" style="padding:6px 10px">Forgot password?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

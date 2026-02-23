@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Logged out — StockSeer{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;margin:48px auto;text-align:center">
+    <div class="chart-card">
+        <div class="chart-card-header"><span class="chart-card-title">Signed out</span></div>
+        <div style="padding:20px">
+            <p>You have been logged out.</p>
+            <a href="{% url 'login' %}" class="btn btn-primary" style="margin-top:12px;display:inline-block">Sign in</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
