@@ -8,6 +8,8 @@ import io, base64
 import os
 from django.conf import settings
 
+# REAPPLY_PATCH: 2026-02-23 - reapply changes to force a new commit/push
+
 # Lazy model loading to avoid import-time failure when the .keras file
 # is not present in the deployed environment.
 MODEL_PATH = os.path.join(settings.BASE_DIR, "ml", "stock_prediction_model.keras")

@@ -8,6 +8,8 @@ import io, base64
 import os
 from django.conf import settings
 
+# REAPPLY_PATCH: 2026-02-23 - reapply changes to force a new commit/push
+
 # Lazy model loading to avoid failing at import-time when the .keras file
 # is not present on the host. This lets the app start and fall back to a
 # simple historical plot if the trained model isn't available.
