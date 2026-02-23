@@ -4,13 +4,26 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from datetime import datetime, timedelta
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import load_model
 import io, base64
 import os
 from django.conf import settings
 
+# Lazy model loading to avoid import-time failure when the .keras file
+# is not present in the deployed environment.
 MODEL_PATH = os.path.join(settings.BASE_DIR, "ml", "stock_prediction_model.keras")
-model = load_model(MODEL_PATH)
+_model = None
+
+def _load_model_if_needed():
+    global _model
+    if _model is not None:
+        return True
+    try:
+        from keras.models import load_model
+        _model = load_model(MODEL_PATH)
+        return True
+    except Exception:
+        _model = None
+        return False
 
 def get_stock_plot(ticker="AAPL"):
     try:

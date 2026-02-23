@@ -4,14 +4,27 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import load_model
 import io, base64
 import os
 from django.conf import settings
-from keras.models import load_model
 
+# Lazy model loading to avoid failing at import-time when the .keras file
+# is not present on the host. This lets the app start and fall back to a
+# simple historical plot if the trained model isn't available.
 MODEL_PATH = os.path.join(settings.BASE_DIR, "ml", "stock_prediction_model.keras")
-model = load_model(MODEL_PATH)
+_model = None
+
+def _load_model_if_needed():
+    global _model
+    if _model is not None:
+        return True
+    try:
+        from keras.models import load_model
+        _model = load_model(MODEL_PATH)
+        return True
+    except Exception:
+        _model = None
+        return False
 
 def get_stock_plot(ticker="AAPL"):
     try:
@@ -39,8 +52,25 @@ def get_stock_plot(ticker="AAPL"):
             y_train.append(data_training_array[i, 0])
         x_train, y_train = np.array(x_train), np.array(y_train)
 
-        MODEL_PATH = os.path.join(settings.BASE_DIR, "StockPredictionPortal", "ml", "stock_prediction_model.keras")
-        model = load_model(MODEL_PATH)
+        # Try to load the ML model; if it's not present, return a simple
+        # historical-only plot as a graceful fallback instead of crashing.
+        if not _load_model_if_needed():
+            fig, ax = plt.subplots(figsize=(10,5))
+            ax.plot(df['Date'], df['Close'], color='tab:blue', label='Close')
+            ax.set_title(f"{ticker} — Historical Prices (model unavailable)")
+            ax.set_xlabel('Date')
+            ax.set_ylabel('Price (USD)')
+            ax.legend()
+            fig.autofmt_xdate()
+            fig.tight_layout()
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format='png', dpi=120)
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+            plt.close(fig)
+            return base64.b64encode(image_png).decode('utf-8'), None
+        model = _model
 
         past_100_days = data_training.tail(100)
         final_df = pd.concat([past_100_days, data_testing], ignore_index=True)
