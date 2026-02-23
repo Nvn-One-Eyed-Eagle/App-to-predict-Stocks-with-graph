@@ -1,1 +1,1 @@
-web: cd StockPredictionPortal && gunicorn StockPredictionPortal.wsgi:application --bind 0.0.0.0:$PORT
+web: gunicorn StockPredictionPortal.wsgi:application --chdir StockPredictionPortal --bind 0.0.0.0:$PORT
