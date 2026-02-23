@@ -2,16 +2,13 @@ services:
   - type: web
     name: stock-predictor
     runtime: python
-    runtimeVersion: "3.10.13"
-    buildCommand: |
-      pip install -r requirements.txt
-      cd StockPredictionPortal && python manage.py collectstatic --noinput
-    startCommand: |
-      cd StockPredictionPortal && python manage.py migrate && gunicorn StockPredictionPortal.wsgi:application --bind 0.0.0.0:$PORT
+    pythonVersion: 3.10
+    buildCommand: bash build.sh
+    startCommand: cd StockPredictionPortal && gunicorn StockPredictionPortal.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: SECRET_KEY
-        value: your-secret-key-here-change-this
+        generateValue: true
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: your-render-domain.onrender.com
+        value: "*.onrender.com"
